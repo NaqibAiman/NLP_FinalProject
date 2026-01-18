@@ -1,0 +1,41 @@
+import whisper
+from gtts import gTTS
+import os
+
+# Load Whisper model
+model = whisper.load_model("base")
+
+# Predefined FAQ
+faq = {
+    "library hours": "The library is open from 8am to 10pm.",
+    "exam timetable": "You can check the exam timetable on the student portal.",
+    "course registration": "Course registration is done through i-GOT.",
+    "Doctor Hasan": "Doctor Hassan is really handsome."
+}
+
+# Speech-to-text
+def speech_to_text(audio_path):
+    result = model.transcribe(audio_path)
+    return result["text"]
+
+# Offline response
+def get_response(text):
+    for key in faq:
+        if key in text.lower():
+            return faq[key]
+    return "Sorry, I can only answer predefined questions right now."
+
+# Text-to-speech
+def speak(text):
+    tts = gTTS(text=text)
+    tts.save("reply.mp3")
+    os.system("start reply.mp3")
+
+# === RUN ===
+audio_file = r"D:\codes\input3.wav.mp3"
+text = speech_to_text(audio_file)
+print("You said:", text)
+
+reply = get_response(text)
+print("Assistant:", reply)
+speak(reply)
